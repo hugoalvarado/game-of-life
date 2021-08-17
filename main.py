@@ -45,12 +45,12 @@ grid = []
 for row in range(MAX_ROWS):
     grid.append([])
     for column in range(MAX_ROWS):
-        state = random.randint(1, 2)
+        state = random.randint(1, 15)
         grid[row].append(0 if state != 1 else 1)
 
 
 def is_living(cell):
-    return cell > 0
+    return cell == 1
 
 
 def check_bounds(val):
@@ -65,10 +65,6 @@ def is_alive_at(grid, row, column):
     row = check_bounds(row)
     column = check_bounds(column)
     return is_living(grid[row][column])
-
-
-def is_old(cell):
-    return cell == 2
 
 
 def count_neighbors(grid, row, column):
@@ -103,10 +99,6 @@ def count_neighbors(grid, row, column):
 
 def kill(grid, row, column):
     grid[row][column] = 0
-
-
-def retire(grid, row, column):
-    grid[row][column] = 2
 
 
 def revive(grid, row, column):
@@ -145,23 +137,20 @@ while not done:
     for row in range(MAX_ROWS):
         for column in range(MAX_ROWS):
 
+            neighbors = count_neighbors(grid, row, column)
             # Update game state here:
-
             if is_living(grid[row][column]):
-                if is_old(grid[row][column]):
-                    kill(grid, row, column)
-                elif count_neighbors(grid, row, column) <= 2:
+                if neighbors < 2 or neighbors > 3:
                     # A living cell dies if it has fewer than two living neighboring cells.
+                    # A living cell with more than three living neighboring cells dies in the next time step.
                     kill(grid, row, column)
-                elif 2 <= count_neighbors(grid, row, column) <= 3:
+                elif neighbors == 2 or neighbors == 3:
                     # A living cell with two or three living neighbors lives on.
                     pass
-                elif count_neighbors(grid, row, column) > 3:
-                    # A living cell with more than three living neighboring cells dies in the next time step.
-                    retire(grid, row, column)
-            elif count_neighbors(grid, row, column) == 3:
-                # A dead cell is revived if it has exactly three living neighboring cells.
-                revive(grid, row, column)
+            elif not is_living(grid[row][column]):
+                if neighbors == 3:
+                    # A dead cell is revived if it has exactly three living neighboring cells.
+                    revive(grid, row, column)
 
             color = GREEN if is_living(grid[row][column]) else DARK
 

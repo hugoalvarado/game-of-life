@@ -1,7 +1,9 @@
 # Game of life
 
+# The universe of the Game of Life is an infinite, two-dimensional orthogonal grid of square cells, each of which
+# is in one of two possible states, alive or dead, (or populated and unpopulated, respectively).
+
 # Rules
-#
 # The simulation starts in the first time step with a specified initial state.
 # Each cell in the game has one of two states: "Alive" or "Dead". In the Python example,
 # these states are expressed by the numbers 0 and 1. For the next time step, the states of the cells
@@ -44,55 +46,68 @@ for row in range(MAX_ROWS):
     grid.append([])
     for column in range(MAX_ROWS):
         state = random.randint(1, 2)
-        grid[row].append(0 if state is not 1 else 1)
+        grid[row].append(0 if state != 1 else 1)
 
 
 def is_living(cell):
     return cell > 0
 
+
+def check_bounds(val):
+    if val == -1:
+        return MAX_ROWS - 1
+    if val == MAX_ROWS:
+        return 0
+    return val
+
+
 def is_alive_at(grid, row, column):
-    return (
-        0 <= row < MAX_ROWS and
-        0 <= column < MAX_ROWS and
-        is_living(grid[row][column]))
+    row = check_bounds(row)
+    column = check_bounds(column)
+    return is_living(grid[row][column])
+
 
 def is_old(cell):
     return cell == 2
+
 
 def count_neighbors(grid, row, column):
     neighbors = 0
 
     # sides
-    if is_alive_at(grid, row, column+1):
+    if is_alive_at(grid, row, column + 1):
         neighbors += 1
-    if is_alive_at(grid, row, column-1):
+    if is_alive_at(grid, row, column - 1):
         neighbors += 1
 
     # top, down
-    if is_alive_at(grid,row+1, column):
+    if is_alive_at(grid, row + 1, column):
         neighbors += 1
-    if is_alive_at(grid,row-1, column):
+    if is_alive_at(grid, row - 1, column):
         neighbors += 1
 
     # diagonal
-    if is_alive_at(grid, row+1, column+1):
+    if is_alive_at(grid, row + 1, column + 1):
         neighbors += 1
-    if is_alive_at(grid, row-1, column-1):
+    if is_alive_at(grid, row - 1, column - 1):
         neighbors += 1
 
     # other diagonal
-    if is_alive_at(grid, row-1, column+1):
+    if is_alive_at(grid, row - 1, column + 1):
         neighbors += 1
-    if is_alive_at(grid, row+1, column-1):
+    if is_alive_at(grid, row + 1, column - 1):
         neighbors += 1
 
     return neighbors
 
+
 def kill(grid, row, column):
     grid[row][column] = 0
 
+
 def retire(grid, row, column):
     grid[row][column] = 2
+
 
 def revive(grid, row, column):
     grid[row][column] = 1
@@ -126,7 +141,6 @@ while not done:
             # grid[row][column] = 1
             print("Click ", pos, "Grid coordinates: ", row, column)
 
-
     # Draw the grid
     for row in range(MAX_ROWS):
         for column in range(MAX_ROWS):
@@ -159,10 +173,9 @@ while not done:
                               HEIGHT])
 
     # Limit to 60 frames per second
-    clock.tick(60)
+    clock.tick(60 * 5)
     # Go ahead and update the screen with what we've drawn.
     pygame.display.flip()
-
 
 # Be IDLE friendly. If you forget this line, the program will 'hang'
 # on exit.

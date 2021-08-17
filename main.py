@@ -14,6 +14,7 @@
 
 
 import pygame
+import random
 
 # Define some colors
 BLACK = (0, 0, 0)
@@ -23,8 +24,6 @@ RED = (255, 0, 0)
 
 BACK_GROUND = (41, 42, 48)
 GRID_LINES = (47, 50, 57)
-
-
 
 # This sets the WIDTH and HEIGHT of each grid location
 WIDTH = 7
@@ -44,7 +43,8 @@ grid = []
 for row in range(MAX_ROWS):
     grid.append([])
     for column in range(MAX_ROWS):
-        grid[row].append(0)
+        state = random.randint(1, 10)
+        grid[row].append(0 if state is not 1 else 1)
 
 
 # Initialize pygame

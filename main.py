@@ -53,17 +53,17 @@ def is_living(cell):
     return cell == 1
 
 
-def check_bounds(val):
+def check_bounds(grid, val):
     if val == -1:
-        return MAX_ROWS - 1
-    if val == MAX_ROWS:
+        return len(grid) - 1
+    if val == len(grid):
         return 0
     return val
 
 
 def is_alive_at(grid, row, column):
-    row = check_bounds(row)
-    column = check_bounds(column)
+    row = check_bounds(grid, row)
+    column = check_bounds(grid, column)
     return is_living(grid[row][column])
 
 
@@ -105,67 +105,74 @@ def revive(grid, row, column):
     grid[row][column] = 1
 
 
-# Initialize pygame
-pygame.init()
-screen = pygame.display.set_mode(WINDOW_SIZE)
-# Set the screen background
-screen.fill(BACK_GROUND)
-# Set title of screen
-pygame.display.set_caption("Game of Life")
-# Used to manage how fast the screen updates
-clock = pygame.time.Clock()
+def run_this():
+    # Initialize pygame
+    pygame.init()
+    screen = pygame.display.set_mode(WINDOW_SIZE)
+    # Set the screen background
+    screen.fill(BACK_GROUND)
+    # Set title of screen
+    pygame.display.set_caption("Game of Life")
+    # Used to manage how fast the screen updates
+    clock = pygame.time.Clock()
 
-# Loop until the user clicks the close button.
-done = False
+    # Loop until the user clicks the close button.
+    done = False
 
-# -------- Main Program Loop -----------
-while not done:
-    for event in pygame.event.get():  # User did something
-        if event.type == pygame.QUIT:  # If user clicked close
-            done = True  # Flag that we are done so we exit this loop
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            # User clicks the mouse. Get the position
-            pos = pygame.mouse.get_pos()
-            # Change the x/y screen coordinates to grid coordinates
-            column = pos[0] // (WIDTH + MARGIN)
-            row = pos[1] // (HEIGHT + MARGIN)
-            # Set that location to one
-            # grid[row][column] = 1
-            print("Click ", pos, "Grid coordinates: ", row, column)
+    # -------- Main Program Loop -----------
+    while not done:
+        for event in pygame.event.get():  # User did something
+            if event.type == pygame.QUIT:  # If user clicked close
+                done = True  # Flag that we are done so we exit this loop
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                # User clicks the mouse. Get the position
+                pos = pygame.mouse.get_pos()
+                # Change the x/y screen coordinates to grid coordinates
+                column = pos[0] // (WIDTH + MARGIN)
+                row = pos[1] // (HEIGHT + MARGIN)
+                # Set that location to one
+                # grid[row][column] = 1
+                print("Click ", pos, "Grid coordinates: ", row, column)
 
-    # Draw the grid
-    for row in range(MAX_ROWS):
-        for column in range(MAX_ROWS):
+        # Draw the grid
+        for row in range(MAX_ROWS):
+            for column in range(MAX_ROWS):
 
-            neighbors = count_neighbors(grid, row, column)
-            # Update game state here:
-            if is_living(grid[row][column]):
-                if neighbors < 2 or neighbors > 3:
-                    # A living cell dies if it has fewer than two living neighboring cells.
-                    # A living cell with more than three living neighboring cells dies in the next time step.
-                    kill(grid, row, column)
-                elif neighbors == 2 or neighbors == 3:
-                    # A living cell with two or three living neighbors lives on.
-                    pass
-            elif not is_living(grid[row][column]):
-                if neighbors == 3:
-                    # A dead cell is revived if it has exactly three living neighboring cells.
-                    revive(grid, row, column)
+                neighbors = count_neighbors(grid, row, column)
+                import pudb
+                pu.db
+                # Update game state here:
+                if is_living(grid[row][column]):
+                    if neighbors < 2 or neighbors > 3:
+                        # A living cell dies if it has fewer than two living neighboring cells.
+                        # A living cell with more than three living neighboring cells dies in the next time step.
+                        kill(grid, row, column)
+                    elif neighbors == 2 or neighbors == 3:
+                        # A living cell with two or three living neighbors lives on.
+                        pass
+                elif not is_living(grid[row][column]):
+                    if neighbors == 3:
+                        # A dead cell is revived if it has exactly three living neighboring cells.
+                        revive(grid, row, column)
 
-            color = GREEN if is_living(grid[row][column]) else DARK
+                color = GREEN if is_living(grid[row][column]) else DARK
 
-            pygame.draw.rect(screen,
-                             color,
-                             [(MARGIN + WIDTH) * column + MARGIN,
-                              (MARGIN + HEIGHT) * row + MARGIN,
-                              WIDTH,
-                              HEIGHT])
+                pygame.draw.rect(screen,
+                                 color,
+                                 [(MARGIN + WIDTH) * column + MARGIN,
+                                  (MARGIN + HEIGHT) * row + MARGIN,
+                                  WIDTH,
+                                  HEIGHT])
 
-    # Limit to 60 frames per second
-    clock.tick(60 * 5)
-    # Go ahead and update the screen with what we've drawn.
-    pygame.display.flip()
+        # Limit to 60 frames per second
+        clock.tick(60)
+        # Go ahead and update the screen with what we've drawn.
+        pygame.display.flip()
 
-# Be IDLE friendly. If you forget this line, the program will 'hang'
-# on exit.
-pygame.quit()
+    # Be IDLE friendly. If you forget this line, the program will 'hang'
+    # on exit.
+    pygame.quit()
+
+
+if __name__ == '__main__':
+    run_this()
